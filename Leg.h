@@ -265,6 +265,8 @@ public:
         float tAngle = (primaryTibiaAngle - fAngle) - _tStartAngle;
 
         move(cAngle, fAngle, tAngle);
+
+        return true;
     }
 
     // Can't use reference argument here due to limitations in gcc avr

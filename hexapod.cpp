@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "Leg.h"
 
 // TODO: Remove this temporary goo
@@ -17,6 +18,33 @@ static Leg* leftLegs = legs + N / 2;
 static Point zero(0,0,0);
 
 static Point stateLinearMovement;
+
+// Relative to default!
+void smoothTo(Point& to, int legGroup)
+{
+    Point relative[N];
+    for (int i = legGroup; i < N; i += 2)
+        relative[i].assign((legs[i].getDefaultPos() + to) - legs[i].getCurrentPos());
+  
+    for(float p = 0; p <= 1; p += 0.05)
+    {
+        for (int li = legGroup; li < N; li += 2)
+        {
+            Point currSubStep = relative[li] * p;
+            Point currStep = legs[li].getCurrentPos() + currSubStep;
+            currStep.z = legs[li].getDefaultPos().z + to.z + 50 * (0.5 - fabs(0.5 - p));
+            legs[li].reach(currStep);
+        }
+        
+        delay(5);
+    }
+}
+
+void smoothTo(Point& to)
+{
+    smoothTo(to, 0);
+    smoothTo(to, 1);
+}
 
 void processState()
 {
@@ -70,33 +98,6 @@ void walk(int steps, Point direction)
 
             delay(1);
         }        
-    }
-}
-
-void smoothTo(Point& to)
-{
-    smoothTo(to, 0);
-    smoothTo(to, 1);
-}
-
-// Relative to default!
-void smoothTo(Point& to, int legGroup)
-{
-    Point relative[N];
-    for (int i = legGroup; i < N; i += 2)
-        relative[i].assign((legs[i].getDefaultPos() + to) - legs[i].getCurrentPos());
-  
-    for(float p = 0; p <= 1; p += 0.05)
-    {
-        for (int li = legGroup; li < N; li += 2)
-        {
-            Point currSubStep = relative[li] * p;
-            Point currStep = legs[li].getCurrentPos() + currSubStep;
-            currStep.z = legs[li].getDefaultPos().z + to.z + 50 * (0.5 - fabs(0.5 - p));
-            legs[li].reach(currStep);
-        }
-        
-        delay(5);
     }
 }
 
