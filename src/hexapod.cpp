@@ -19,7 +19,6 @@ static Gait2 gait(legs);
 
 char command = 0;
 unsigned long lastCommandTime = 0;
-static float progress = 0;
 
 SmoothFloat fpitch(0,0);
 SmoothFloat froll(0,0);
@@ -49,7 +48,6 @@ void tickMovements()
     const unsigned long deltaT = now - _lastTickTime;
     const float angleStepDelta = ((PI * 0.25) * 0.001) * (float) deltaT;
     const float shiftStepDelta = (100.0 * 0.001) * (float) deltaT;
-    const float shiftMandibleDelta = (200.0 * 0.001) * (float) deltaT;
 
     Point bodyShift(fbodyX.getCurrent(shiftStepDelta),
                     fbodyY.getCurrent(shiftStepDelta),
